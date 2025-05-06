@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.claro.claro.modules.customer.model.Customer;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -41,6 +43,6 @@ public class Product {
 
     @ManyToOne
     @JoinColumn(name = "created_by", nullable = false)
-    private User createdBy;
+    private Customer createdBy;
 
 }
