@@ -14,6 +14,7 @@ public class ProductMapper {
         product.setStock(dto.getStock());
         product.setCategory(dto.getCategory());
         product.setPrice(dto.getPrice());
+        product.setCreatedBy(dto.getCreatedBy());
         return product;
     }
 
