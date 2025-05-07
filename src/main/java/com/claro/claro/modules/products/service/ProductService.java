@@ -22,6 +22,11 @@ public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
+    public Product getProductEntityById(UUID productId) {
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new com.claro.claro.modules.orders.exceptions.ProductNotFoundException("Product not found: " + productId));
+    }
+
     public ProductResponseDTO create(CreateProductRequestDTO dto) {
         validateProduct(dto);
 

@@ -27,4 +27,7 @@ public class CreateProductRequestDTO {
 
     @DecimalMin(value = "0.01", message = "O preço deve ser maior que zero.")
     private double price;
+
+    @NotBlank(message = "O usuário criador é obrigatório.")
+    private String createdBy; // Pode ser um UUID ou String representando o usuário
 }

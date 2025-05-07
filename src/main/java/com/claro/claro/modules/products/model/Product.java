@@ -39,8 +39,12 @@ public class Product {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    /*
     @ManyToOne
     @JoinColumn(name = "created_by", nullable = false)
     private User createdBy;
+    */
 
+    @Column(name = "created_by", nullable = false)
+    private String createdBy; // Pode ser um UUID ou String representando o usuário
 }
