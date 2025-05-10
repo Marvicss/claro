@@ -1,5 +1,7 @@
 package com.claro.claro.modules.products.service;
 
+import com.claro.claro.modules.customer.model.Customer;
+import com.claro.claro.modules.customer.repository.CustomerRepository;
 import com.claro.claro.modules.products.dtos.CreateProductRequestDTO;
 import com.claro.claro.modules.products.dtos.ProductResponseDTO;
 import com.claro.claro.modules.products.exceptions.ProductFoundException;
@@ -9,6 +11,7 @@ import com.claro.claro.modules.products.model.Product;
 import com.claro.claro.modules.products.repository.ProductRepository;
 import jakarta.persistence.EntityExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,8 +22,13 @@ import java.util.stream.Collectors;
 @Service
 public class ProductService {
 
-    @Autowired
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
+    private final CustomerRepository customerRepository;
+
+    public ProductService(ProductRepository productRepository, CustomerRepository customerRepository) {
+        this.productRepository = productRepository;
+        this.customerRepository = customerRepository;
+    }
 
     public Product getProductEntityById(UUID productId) {
         return productRepository.findById(productId)
@@ -30,17 +38,21 @@ public class ProductService {
     public ProductResponseDTO create(CreateProductRequestDTO dto) {
         validateProduct(dto);
 
-        if (productRepository.existsByName(dto.getName())) {
-            throw new ProductFoundException("Product with name " + dto.getName() + " already exists");
+        if (productRepository.existsByName(dto.name())) {
+            throw new ProductFoundException("Product with name " + dto.name() + " already exists");
         }
 
+        Customer customer = customerRepository.findById(dto.createdBy())
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado com ID: " + dto.createdBy()));
+
         Product product = ProductMapper.toEntity(dto);
+        product.setCreatedBy(customer);
         productRepository.save(product);
         return new ProductMapper().toDTO(product);
     }
 
-    public List<ProductResponseDTO> getAllProducts() {
-        List<Product> products = productRepository.findAll();
+    public List<ProductResponseDTO> getAllProducts(Pageable pageable) {
+        List<Product> products = productRepository.findAll(pageable).getContent();
 
         return products.stream()
                 .map(ProductMapper::toDTO)
@@ -73,11 +85,11 @@ public class ProductService {
         Product product = productOptional.get();
 
         // Atualizando os campos do produto com os dados fornecidos
-        product.setName(productDTO.getName());
-        product.setDescription(productDTO.getDescription());
-        product.setStock(productDTO.getStock());
-        product.setCategory(productDTO.getCategory());
-        product.setPrice(productDTO.getPrice());
+        product.setName(productDTO.name());
+        product.setDescription(productDTO.description());
+        product.setStock(productDTO.stock());
+        product.setCategory(productDTO.category());
+        product.setPrice(productDTO.price());
 
         productRepository.save(product);
 
@@ -86,11 +98,11 @@ public class ProductService {
 
 
     private void validateProduct(CreateProductRequestDTO dto) {
-        if (dto.getStock() < 0) {
+        if (dto.stock() < 0) {
             throw new IllegalArgumentException("O estoque não pode ser negativo.");
         }
 
-        if (dto.getPrice() <= 0) {
+        if (dto.price() <= 0) {
             throw new IllegalArgumentException("O preço deve ser maior que zero.");
         }
     }
