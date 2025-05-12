@@ -1,5 +1,10 @@
 package com.claro.claro.modules.products.dtos;
 
+
+
+import com.claro.claro.modules.customer.model.Customer;
+
+
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -27,4 +32,10 @@ public record CreateProductRequestDTO(
         @NotNull(message = "O usuário criador é obrigatório.")
         UUID createdBy
 
+
+    @NotBlank(message = "O usuário criador é obrigatório.")
+    private Customer createdBy; // Pode ser um UUID ou String representando o usuário
+}
+
 ) {}
+
