@@ -1,6 +1,7 @@
 package com.claro.claro.modules.products.dtos;
 
 
+import com.claro.claro.modules.customer.model.Customer;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -29,5 +30,5 @@ public class CreateProductRequestDTO {
     private double price;
 
     @NotBlank(message = "O usuário criador é obrigatório.")
-    private String createdBy; // Pode ser um UUID ou String representando o usuário
+    private Customer createdBy; // Pode ser um UUID ou String representando o usuário
 }
