@@ -1,6 +1,5 @@
 package com.claro.claro.modules.products.mappers;
 
-
 import com.claro.claro.modules.customer.model.Customer;
 import com.claro.claro.modules.products.dtos.CreateProductRequestDTO;
 import com.claro.claro.modules.products.dtos.ProductResponseDTO;
@@ -15,6 +14,7 @@ public class ProductMapper {
         product.setStock(dto.stock());
         product.setCategory(dto.category());
         product.setPrice(dto.price());
+        product.setImgUrl(dto.imgUrl());
         return product;
     }
 
@@ -23,8 +23,7 @@ public class ProductMapper {
         ProductResponseDTO.CustomerDTO createdByDTO = new ProductResponseDTO.CustomerDTO(
                 createdBy.getId(),
                 createdBy.getName(),
-                createdBy.getEmail()
-        );
+                createdBy.getEmail());
 
         return new ProductResponseDTO(
                 product.getId(),
@@ -33,8 +32,8 @@ public class ProductMapper {
                 product.getStock(),
                 product.getCategory(),
                 product.getPrice(),
+                product.getImgUrl(),
                 product.getCreatedAt(),
-                createdByDTO
-        );
+                createdByDTO);
     }
 }

@@ -10,9 +10,10 @@ public record ProductResponseDTO(
         int stock,
         String category,
         double price,
+        String imgUrl,
         LocalDateTime createdAt,
-        CustomerDTO createdBy
-) {
-    public record CustomerDTO(UUID id, String name, String email) {}
+        CustomerDTO createdBy) {
+    public record CustomerDTO(UUID id, String name, String email) {
+    }
 
 }
