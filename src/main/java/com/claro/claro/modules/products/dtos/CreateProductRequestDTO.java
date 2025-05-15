@@ -11,21 +11,25 @@ import java.util.UUID;
 
 public record CreateProductRequestDTO(
 
-@NotBlank(message="O nome é obrigatório.")String name,
+        @NotBlank(message = "O nome é obrigatório.")
+        String name,
 
-@NotBlank(message="A descrição é obrigatória.")String description,
+        @NotBlank(message = "A descrição é obrigatória.")
+        String description,
 
-@Min(value=0,message="O estoque não pode ser negativo.")int stock,
+        @Min(value = 0, message = "O estoque não pode ser negativo.")
+        int stock,
 
-@NotBlank(message="A categoria é obrigatória.")String category,
+        @NotBlank(message = "A categoria é obrigatória.")
+        String category,
 
-@DecimalMin(value="0.01",message="O preço deve ser maior que zero.")double price,
+        @DecimalMin(value = "0.01", message = "O preço deve ser maior que zero.")
+        double price,
 
-@NotBlank(message="A url da imagem é obrigatoria")String imgUrl,
+        @NotBlank(message = "A url da imagem é obrigatória.")
+        String imgUrl,
 
-@NotBlank(message="O usuário criador é obrigatório.")
-private Customer createdBy; // Pode ser um UUID ou String representando o usuário
-}
+        @NotNull(message = "O usuário criador é obrigatório.")
+        UUID createdBy
 
-) {
-}
+) {}
