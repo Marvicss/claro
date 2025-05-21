@@ -3,6 +3,7 @@ package com.claro.claro.modules.customer.controller;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -14,6 +15,7 @@ import com.claro.claro.modules.customer.dtos.CustomerResponseDTO;
 import com.claro.claro.modules.customer.model.Customer;
 import com.claro.claro.modules.customer.service.CustomerService;
 
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -48,6 +50,12 @@ public class CustomerController {
     @PutMapping("/{id}")
     public ResponseEntity<CustomerResponseDTO> update(@PathVariable UUID id, @RequestBody Customer customer) {
         CustomerResponseDTO updatedCustomer = customerService.update(id, customer);
+        System.out.println(updatedCustomer);
+
+        if (updatedCustomer == null) {
+            return ResponseEntity.status(404).build();
+        }
+
         return ResponseEntity.ok().body(updatedCustomer);
     }
 
