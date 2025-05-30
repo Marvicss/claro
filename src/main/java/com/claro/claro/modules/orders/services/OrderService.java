@@ -5,14 +5,17 @@ import com.claro.claro.modules.orderitem.model.OrderItem;
 import com.claro.claro.modules.orders.dto.OrderRequestDTO;
 import com.claro.claro.modules.orders.dto.OrderResponseDTO;
 import com.claro.claro.modules.orders.exceptions.OrderNotFoundException;
-import com.claro.claro.modules.orders.mapper.OrderMapper;
 import com.claro.claro.modules.orders.model.Orders;
 import com.claro.claro.modules.orders.repository.OrderRepository;
 import com.claro.claro.modules.products.model.Product;
 import com.claro.claro.modules.products.service.ProductService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -30,6 +33,7 @@ public class OrderService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Transactional
     public OrderResponseDTO createOrder(OrderRequestDTO orderDTO) {
         Orders order = new Orders();
         order.setUserId(orderDTO.getUserId());
@@ -37,49 +41,60 @@ public class OrderService {
 
         List<OrderItem> items = orderDTO.getItems().stream().map(itemDTO -> {
             OrderItem item = new OrderItem();
+            Product product = productService.getProductEntityById(itemDTO.getProductId());
             item.setProductId(itemDTO.getProductId());
             item.setQuantity(itemDTO.getQuantity());
             item.setPriceUnit(productService.getProductEntityById(itemDTO.getProductId()).getPrice());
             item.setSubtotal(item.getPriceUnit() * item.getQuantity()); // Calcula o subtotal
-            item.setOrder(order);
             return item;
-        }).collect(Collectors.toList());
+        }).toList();
 
-        order.setItems(items);
+        order.getItems().clear();
+        items.forEach(order::addItem);
 
-        // Calcula o totalValue do pedido
-        double totalValue = items.stream().mapToDouble(OrderItem::getSubtotal).sum();
-        order.setTotalValue(totalValue);
-
+        double totalValueCalculated = order.getItems().stream().mapToDouble(OrderItem::getSubtotal).sum();
+        order.setTotalValue(totalValueCalculated);
         Orders savedOrder = orderRepository.save(order);
 
-        return OrderMapper.toDTO(savedOrder);
+        return convertToResponseDTO(savedOrder);
     }
 
+    @Transactional(readOnly = true)
     public OrderResponseDTO getOrderById(UUID id) {
         Orders order = orderRepository.findById(id)
                 .orElseThrow(() -> new OrderNotFoundException("Order not found: " + id));
         return convertToResponseDTO(order);
     }
 
-    public List<OrderResponseDTO> getAllOrders() {
-        return orderRepository.findAll().stream()
+    @Transactional(readOnly = true)
+    public Page<OrderResponseDTO> getAllOrders(Pageable pageable) {
+        Page<Orders> ordersPage = orderRepository.findAll(pageable);
+        List<OrderResponseDTO> dtos = ordersPage.getContent().stream()
                 .map(this::convertToResponseDTO)
                 .collect(Collectors.toList());
+        return new PageImpl<>(dtos, pageable, ordersPage.getTotalElements());
     }
 
-    public List<OrderResponseDTO> getOrdersByUserId(UUID userId) {
-        return orderRepository.findByUserId(userId).stream()
+    @Transactional(readOnly = true)
+    public Page<OrderResponseDTO> getOrdersByUserId(UUID userId, Pageable pageable) {
+        Page<Orders> ordersPage = orderRepository.findByUserId(userId, pageable);
+        List<OrderResponseDTO> dtos = ordersPage.getContent().stream()
                 .map(this::convertToResponseDTO)
                 .collect(Collectors.toList());
+        return new PageImpl<>(dtos, pageable, ordersPage.getTotalElements());
     }
 
-    public List<OrderResponseDTO> getOrdersByRegion(String region) {
-        return orderRepository.findByRegion(region).stream()
+    @Transactional(readOnly = true)
+    public Page<OrderResponseDTO> getOrdersByRegion(String region, Pageable pageable) {
+        Page<Orders> ordersPage = orderRepository.findByRegion(region, pageable);
+        List<OrderResponseDTO> dtos = ordersPage.getContent().stream()
                 .map(this::convertToResponseDTO)
                 .collect(Collectors.toList());
+        return new PageImpl<>(dtos, pageable, ordersPage.getTotalElements());
+
     }
 
+    @Transactional
     public OrderResponseDTO addItemToOrderFromDTO(UUID orderId, OrderItemRequestDTO itemDTO) {
         Orders order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException("Order not found"));
@@ -97,6 +112,7 @@ public class OrderService {
         return convertToResponseDTO(savedOrder);
     }
 
+    @Transactional
     public void deleteOrder(UUID id) {
         if (!orderRepository.existsById(id)) {
             throw new OrderNotFoundException("Order not found: " + id);
