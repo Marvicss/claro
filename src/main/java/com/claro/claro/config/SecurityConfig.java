@@ -51,10 +51,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/orders/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/orders/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/orders/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/customer/**").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/customer/**").hasAnyRole("COMUM", "ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/customer/**").hasAnyRole("COMUM", "ADMIN")
-                        .anyRequest().authenticated())
+                        .requestMatchers(HttpMethod.POST, "/customer/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/customer/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/customer/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
+
+                        .anyRequest().permitAll())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class) // <-- ADICIONE ESTA LINHA
                 .logout(LogoutConfigurer::disable)
                 .formLogin(FormLoginConfigurer::disable);
