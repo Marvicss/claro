@@ -51,19 +51,22 @@ public class LoginController {
     public ResponseEntity<?> login(@RequestBody @Valid LoginForm form) {
         try {
             Customer customer = this.customerRepository.findByEmail(form.email())
-                    .orElseThrow(() -> new RuntimeException("Usuario não encontrado"));
+                    .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
+            
             if (!passwordEncoder.matches(form.password(), customer.getPassword())) {
-                String token = this.jwtService.gerarTokenCustomer(customer);
-
-                return ResponseEntity.ok( new AuthenticationRespondeDTO(token, customer.getEmail()));
+                return ResponseEntity.badRequest().body("Credenciais inválidas.");
             }
 
-            return ResponseEntity.badRequest().body("Credenciais inválidas.");
+           
+            String token = this.jwtService.gerarTokenCustomer(customer);
+            return ResponseEntity.ok(new AuthenticationRespondeDTO(token, customer.getEmail()));
+
         } catch (Exception exception) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao realizar login.");
         }
     }
+
 
 
 }
