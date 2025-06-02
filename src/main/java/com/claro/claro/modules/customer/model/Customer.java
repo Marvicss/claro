@@ -32,6 +32,7 @@ public class Customer {
     private String city;
     private String state;
 
+
     @Enumerated(EnumType.STRING)
     private RoleCustomerEnum role;
 }
