@@ -26,6 +26,9 @@ public class Customer {
     private String name;
     private String email;
     private String password;
+    private String cargo;
+    private String cidade;
+    private String estado;
 
     @Enumerated(EnumType.STRING)
     private RoleCustomerEnum role;
