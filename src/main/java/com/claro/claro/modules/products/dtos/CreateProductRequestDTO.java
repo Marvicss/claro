@@ -1,34 +1,41 @@
 package com.claro.claro.modules.products.dtos;
 
 
+
 import com.claro.claro.modules.customer.model.Customer;
+
+
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import jakarta.validation.constraints.NotNull;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class CreateProductRequestDTO {
+import java.util.UUID;
 
-    @NotBlank(message = "O nome é obrigatório.")
-    private String name;
+public record CreateProductRequestDTO(
 
-    @NotBlank(message = "A descrição é obrigatória.")
-    private String description;
+        @NotBlank(message = "O nome é obrigatório.")
+        String name,
 
-    @Min(value = 0, message = "O estoque não pode ser negativo.")
-    private int stock;
+        @NotBlank(message = "A descrição é obrigatória.")
+        String description,
 
-    @NotBlank(message = "A categoria é obrigatória.")
-    private String category;
+        @Min(value = 0, message = "O estoque não pode ser negativo.")
+        int stock,
 
-    @DecimalMin(value = "0.01", message = "O preço deve ser maior que zero.")
-    private double price;
+        @NotBlank(message = "A categoria é obrigatória.")
+        String category,
+
+        @DecimalMin(value = "0.01", message = "O preço deve ser maior que zero.")
+        double price,
+
+        @NotNull(message = "O usuário criador é obrigatório.")
+        UUID createdBy
+
 
     @NotBlank(message = "O usuário criador é obrigatório.")
     private Customer createdBy; // Pode ser um UUID ou String representando o usuário
 }
+
+) {}
+
