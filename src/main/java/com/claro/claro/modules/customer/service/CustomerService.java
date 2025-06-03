@@ -44,6 +44,9 @@ public class CustomerService {
 
     public CustomerResponseDTO update(UUID id, Customer customer) {
         if (customerRepository.existsById(id)) {
+            customer.setId(id);
+            String hashPassword = passwordEncoder.encode(customer.getPassword());
+            customer.setPassword(hashPassword);
             Customer updatedCustomer = customerRepository.save(customer);
             return CustomerResponseMapper.customerToResponseDTO(updatedCustomer);
         }

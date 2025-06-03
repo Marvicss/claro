@@ -14,6 +14,7 @@ import com.claro.claro.modules.customer.dtos.CustomerResponseDTO;
 import com.claro.claro.modules.customer.model.Customer;
 import com.claro.claro.modules.customer.service.CustomerService;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -51,6 +52,7 @@ public class CustomerController {
         return ResponseEntity.ok().body(updatedCustomer);
     }
 
+    @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> delete(@PathVariable UUID id) {
         Boolean hasDeleted = customerService.delete(id);
         return ResponseEntity.ok().body(hasDeleted);
