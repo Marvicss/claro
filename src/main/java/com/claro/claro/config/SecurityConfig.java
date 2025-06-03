@@ -34,25 +34,33 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity security) throws Exception {
         security.csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/h2-console/**", "/customer/login", "/logout", "/customer/**"))
+                .ignoringRequestMatchers("/h2-console/**", "/customer/login", "/logout", "/customer/**",
+                        "/products/**", "/orders/**"))
                 .headers(header -> header.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .authorizeHttpRequests(req -> req
-                        .requestMatchers("/h2-console/**", "/customer/login", "/logout", "/customer/", "/customer/**").permitAll()
+                        .requestMatchers("/h2-console/**", "/customer/login", "/logout")
+                        .permitAll()
                         .requestMatchers(HttpMethod.GET, "/products/**").hasAnyRole("COMUM", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/orders/**").hasAnyRole("COMUM", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/customer/**").hasAnyRole("COMUM", "ADMIN")
 
                         // Rotas POST, PUT, DELETE só Podem ser acessadas por administradores
                         .requestMatchers(HttpMethod.POST, "/products/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/products/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/products/**").hasRole("ADMIN")
-                        .anyRequest().authenticated()
-                )
+                        .requestMatchers(HttpMethod.POST, "/orders/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/orders/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/orders/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/customer/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/customer/**").hasAnyRole("COMUM", "ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/customer/**").hasAnyRole("COMUM", "ADMIN")
+                        .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class) // <-- ADICIONE ESTA LINHA
                 .logout(LogoutConfigurer::disable)
                 .formLogin(FormLoginConfigurer::disable);
 
         return security.build();
     }
-
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {

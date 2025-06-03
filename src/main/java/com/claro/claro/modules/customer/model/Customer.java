@@ -2,6 +2,7 @@ package com.claro.claro.modules.customer.model;
 
 import com.claro.claro.enums.RoleCustomerEnum;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -26,6 +27,8 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     private String name;
+
+    @Column(unique = true, nullable = false)
     private String email;
     private String password;
     private String position;
