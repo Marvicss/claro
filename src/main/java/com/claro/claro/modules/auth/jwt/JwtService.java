@@ -25,6 +25,7 @@ public class JwtService {
             return JWT.create()
                     .withIssuer("claro_db")
                     .withSubject(customer.getEmail())
+                    .withClaim("role", customer.getRole().name())
                     .withExpiresAt(this.generateTokenExpiration())
                     .sign(algorithm);
         } catch (JWTCreationException exception) {
