@@ -40,6 +40,12 @@ public class CustomerController {
         return ResponseEntity.ok().body(customer);
     }
 
+    @GetMapping("/email/{email}")
+    public ResponseEntity<CustomerResponseDTO> getCustomerByEmail(@PathVariable String email) {
+        CustomerResponseDTO customer = customerService.getCustomerByEmail(email);
+        return ResponseEntity.ok().body(customer);
+    }
+
     @GetMapping("/")
     public ResponseEntity<List<CustomerResponseDTO>> findAll() {
         List<CustomerResponseDTO> customers = customerService.findAll();
