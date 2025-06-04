@@ -14,7 +14,8 @@ public class WebCOnfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") // Aplica a todas as rotas
-                        .allowedOrigins("http://localhost:3000") // Origem do seu front-end
+                        .allowedOrigins("http://localhost:3000",
+                                "https://front-squad36-claro-cqh823zfs-vanessas-projects-3185b83b.vercel.app")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true); // Se estiver usando cookies/autenticação
