@@ -26,7 +26,7 @@ public class ProductController {
 
 
 
-    @PostMapping
+    @PostMapping("/")
     public ResponseEntity<ProductResponseDTO> createProduct(@RequestBody @Valid CreateProductRequestDTO dto) {
         ProductResponseDTO response = productService.create(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
